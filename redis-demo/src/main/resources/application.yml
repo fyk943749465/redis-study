@@ -1,0 +1,14 @@
+spring:
+  data:
+    redis:
+      host: 192.168.10.17
+      port: 6379
+      password: thinker
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: 100
+          enabled: true
