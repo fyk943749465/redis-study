@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 public class RefreshTokenIntercepter implements HandlerInterceptor {
     private StringRedisTemplate stringRedisTemplate;
-    public RefreshTokenIntercepter(StringRedisTemplate stringRedisTemplate)
-    {
-        this.stringRedisTemplate=stringRedisTemplate;
+
+    public RefreshTokenIntercepter(StringRedisTemplate stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -27,16 +27,15 @@ public class RefreshTokenIntercepter implements HandlerInterceptor {
         //Redis获取
         Map<Object, Object> userMap = stringRedisTemplate.opsForHash().entries(RedisConstants.LOGIN_USER_KEY + token);
         //用户判空
-        if(userMap.isEmpty())
-        {
+        if (userMap.isEmpty()) {
             return true;
         }
         //转换成对象
         UserDTO userDTO = BeanUtil.fillBeanWithMap(userMap, new UserDTO(), false);
         //存储到threadlocal中
-        UserHolder.saveUser((UserDTO) userDTO);
-        //刷新
-        stringRedisTemplate.expire(RedisConstants.LOGIN_USER_KEY + token,RedisConstants.LOGIN_USER_TTL, TimeUnit.MINUTES);
+        UserHolder.saveUser(userDTO);
+        //刷新 token 有效期
+        stringRedisTemplate.expire(RedisConstants.LOGIN_USER_KEY + token, RedisConstants.LOGIN_USER_TTL, TimeUnit.MINUTES);
         return true;
     }
 
